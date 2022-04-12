@@ -14548,6 +14548,245 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 <p>My approach revolved around implementing algorithms that used regression, as regression displays the relationships between variables, and then linearly combining the two to achieve the best results.</p>
 
 </div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h1 id="Case-Study-%232">Case Study #2<a class="anchor-link" href="#Case-Study-%232">&#182;</a></h1>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[66]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;C:/Users/AustonL/Documents/Data/casestudy.csv&quot;</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[69]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">yr15</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2015</span><span class="p">]</span>
+<span class="n">yr16</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2016</span><span class="p">]</span>
+<span class="n">yr17</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2017</span><span class="p">]</span>
+
+<span class="n">yr15existCust</span> <span class="o">=</span> <span class="n">yr15newCust</span> <span class="o">=</span> <span class="n">yr15</span><span class="p">[</span><span class="s1">&#39;customer_email&#39;</span><span class="p">]</span>
+<span class="n">yr16newCust</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">yr16</span><span class="p">[</span><span class="s1">&#39;customer_email&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">yr15</span><span class="p">[</span><span class="s1">&#39;customer_email&#39;</span><span class="p">]))</span>
+<span class="n">yr16existCust</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">yr16</span><span class="p">[</span><span class="s1">&#39;customer_email&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">yr15</span><span class="p">[</span><span class="s1">&#39;customer_email&#39;</span><span class="p">]))</span>
+<span class="n">yr17newCust</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">yr17</span><span class="p">[</span><span class="s1">&#39;customer_email&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">yr16</span><span class="p">[</span><span class="s1">&#39;customer_email&#39;</span><span class="p">]))</span>
+<span class="n">yr17existCust</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">yr17</span><span class="p">[</span><span class="s1">&#39;customer_email&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">yr16</span><span class="p">[</span><span class="s1">&#39;customer_email&#39;</span><span class="p">]))</span>
+
+<span class="n">yr15newCustRev</span> <span class="o">=</span> <span class="n">yr15</span><span class="p">[</span><span class="s1">&#39;net_revenue&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">yr16newCustRev</span> <span class="o">=</span> <span class="n">yr16</span><span class="p">[</span><span class="n">yr16</span><span class="p">[</span><span class="s1">&#39;customer_email&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">yr16newCust</span><span class="p">)][</span><span class="s1">&#39;net_revenue&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">yr17newCustRev</span> <span class="o">=</span> <span class="n">yr17</span><span class="p">[</span><span class="n">yr17</span><span class="p">[</span><span class="s1">&#39;customer_email&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">yr17newCust</span><span class="p">)][</span><span class="s1">&#39;net_revenue&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+<span class="n">yr15existCustRev</span> <span class="o">=</span> <span class="n">yr15</span><span class="p">[</span><span class="s1">&#39;net_revenue&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">yr16existCustRev</span> <span class="o">=</span> <span class="n">yr16</span><span class="p">[</span><span class="n">yr16</span><span class="p">[</span><span class="s1">&#39;customer_email&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">yr16existCust</span><span class="p">)][</span><span class="s1">&#39;net_revenue&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">yr17existCustRev</span> <span class="o">=</span> <span class="n">yr17</span><span class="p">[</span><span class="n">yr17</span><span class="p">[</span><span class="s1">&#39;customer_email&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">yr16existCust</span><span class="p">)][</span><span class="s1">&#39;net_revenue&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[72]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">yrs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;years&quot;</span><span class="p">:[</span><span class="s1">&#39;2015&#39;</span><span class="p">,</span> <span class="s1">&#39;2016&#39;</span><span class="p">,</span> <span class="s1">&#39;2017&#39;</span><span class="p">],</span> <span class="s2">&quot;New Customer Revenue&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">yr15newCustRev</span><span class="p">,</span> <span class="n">yr16newCustRev</span><span class="p">,</span> <span class="n">yr17newCustRev</span><span class="p">],</span>
+                      <span class="s2">&quot;Existing Customer Revenue Current Year&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="n">yr15existCustRev</span><span class="p">,</span> <span class="n">yr16existCustRev</span><span class="p">,</span> <span class="n">yr17existCustRev</span><span class="p">]})</span>
+<span class="n">yrs</span> <span class="o">=</span> <span class="n">yrs</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;years&quot;</span><span class="p">)</span>
+<span class="n">yrs</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[72]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>New Customer Revenue</th>
+      <th>Existing Customer Revenue Current Year</th>
+    </tr>
+    <tr>
+      <th>years</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2015</th>
+      <td>29036749.19</td>
+      <td>29036749.19</td>
+    </tr>
+    <tr>
+      <th>2016</th>
+      <td>18245491.01</td>
+      <td>25730943.59</td>
+    </tr>
+    <tr>
+      <th>2017</th>
+      <td>28776235.04</td>
+      <td>2740887.39</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[77]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">year15newcustomers</span> <span class="o">=</span> <span class="n">yr15existCust</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span>
+<span class="n">year15newcustomers</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[77]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>customer_email</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>nhknapwsbx@gmail.com</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>joiuzbvcpn@gmail.com</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>ukkjctepxt@gmail.com</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>gykatilzrt@gmail.com</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>mmsgsrtxah@gmail.com</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>231289</th>
+      <td>xtrpmgjbwp@gmail.com</td>
+    </tr>
+    <tr>
+      <th>231290</th>
+      <td>peeorxpsbr@gmail.com</td>
+    </tr>
+    <tr>
+      <th>231291</th>
+      <td>vanasezjpw@gmail.com</td>
+    </tr>
+    <tr>
+      <th>231292</th>
+      <td>dnpremlztb@gmail.com</td>
+    </tr>
+    <tr>
+      <th>231293</th>
+      <td>qsgswrpycl@gmail.com</td>
+    </tr>
+  </tbody>
+</table>
+<p>231294 rows × 1 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
